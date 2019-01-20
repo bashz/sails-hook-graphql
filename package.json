@@ -1,0 +1,26 @@
+{
+  "name": "sails-hook-graphql",
+  "version": "0.0.1",
+  "description": "Graphql controller for sails",
+  "main": "index.js",
+  "sails": {
+    "isHook": true,
+    "hookName": "graphql"
+  },
+  "devDependencies": {
+    "mocha": "^5.2.0",
+    "sails": "^1.1.0",
+    "supertest": "^3.4.1"
+  },
+  "peerDependencies": {
+    "sails": "^1.1.0"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha -R spec"
+  },
+  "author": "",
+  "license": "GPL",
+  "dependencies": {
+    "graphql": "^14.1.1"
+  }
+}
