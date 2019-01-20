@@ -1,0 +1,17 @@
+{
+  "name": "instance",
+  "private": false,
+  "version": "0.0.0",
+  "description": "a mock sails instance",
+  "keywords": [],
+  "dependencies": {
+    "sails": "^1.1.0",
+    "sails-hook-orm": "^2.1.1"
+  },
+  "main": "app.js",
+  "author": "bashz",
+  "license": "",
+  "engines": {
+    "node": "^11.1"
+  }
+}
