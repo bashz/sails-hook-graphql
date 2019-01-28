@@ -32,16 +32,23 @@ module.exports = function (sails) {
         sails.config[this.configKey].models = '*'
       }
     },
-    initialize(cb) {
+    initialize (cb) {
       sails.after(['hook:orm:loaded'], () => {
-        register(sails)
+        let toOmit = []
+        for (model in sails.models) {
+          if (sails.models[model].hasSchema) {
+            toOmit.push(model)
+          }
+        }
+        const schema = generateSchema(_.omit(sails.models, toOmit), graphql)
+        register(sails, schema)
         this.routes.before[sails.config[this.configKey].route] = {action: 'graphql'}
-        const schema = generateSchema(_.omit(sails.models, ['archive']), graphql)
         return cb()
       })
     },
     registerActions(cb) {
-      register(sails)
+      const schema = generateSchema(_.omit(sails.models, ['archive']), graphql)
+        register(sails, schema)
       return cb()
     }
   }

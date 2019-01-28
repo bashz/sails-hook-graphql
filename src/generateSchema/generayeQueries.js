@@ -1,4 +1,4 @@
-module.exports = function (model, types, graphql) {
+module.exports = (model, types, graphql) => {
   const single = {
 
   }

@@ -1,8 +1,11 @@
 module.exports = {
-  capInitial(name) {
+  capAll (name) {
+    return name.toUpperCase()
+  },
+  capInitial (name) {
     return name.replace(/^(\w)/, (match, cought) => cought.toUpperCase())
   },
-  plurialize(name) {
+  plurialize (name) {
     return name.replace(/(y)?$/, (match, cought) => {if(cought) return 'ies'; else return 's'})
   },
   type (name) {

@@ -21,6 +21,7 @@
   "author": "",
   "license": "GPL",
   "dependencies": {
-    "graphql": "^14.1.1"
+    "graphql": "^14.1.1",
+    "validator": "^10.11.0"
   }
 }

@@ -3,6 +3,15 @@ const generateTypes = require('./generateTypes')
 const generateQueries = require('./generayeQueries')
 const generateMutators = require('./generateMutators')
 
-module.exports = function (models) {
-  console.log(models)
+module.exports = (models, graphql) => {
+  let unbound = {}
+  graphql = generateTypes.internals(graphql)
+  // console.log(graphql)
+  for (let model in models) {
+    unbound[model] = generateTypes.unbound(models[model], graphql)
+  }
+  console.log(models.profile.attributes)
+  // console.log(models.profile._adapter.datastores.default.primaryKeyCols)
+  // console.log(models.user.associations)
+  // console.log(sails)
 }

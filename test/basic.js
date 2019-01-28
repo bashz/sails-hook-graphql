@@ -9,12 +9,18 @@ describe('Basic tests', function () {
       appPath: __dirname + '/instance',
       hooks: {
         "sails-hook-graphql": require('../'),
-        "grunt": false
+        "grunt": false,
+        "pubsub": false,
+        "session": false,
+        "views": false,
+        "i18n": false
       },
       models: { migrate: 'drop'},
-      log: { level: "silly" }
+      log: { level: 'debug' }
     }, function (err, _sails) {
-      if (err) return done(err)
+      if (err) {
+        return done(err)
+      }
       sails = _sails
       return done()
     })
