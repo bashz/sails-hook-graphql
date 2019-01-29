@@ -17,7 +17,8 @@ module.exports = {
     },
     age: {
       type: 'number',
-      isInteger: true
+      isInteger: true,
+      defaultsTo: 30
     }
     //  ╔═╗╦═╗╦╔╦╗╦╔╦╗╦╦  ╦╔═╗╔═╗
     //  ╠═╝╠╦╝║║║║║ ║ ║╚╗╔╝║╣ ╚═╗

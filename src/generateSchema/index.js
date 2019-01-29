@@ -1,6 +1,6 @@
 const format = require('../utils/namingFormats')
 const generateTypes = require('./generateTypes')
-const generateQueries = require('./generayeQueries')
+const generateQueries = require('./generateQueries')
 const generateMutators = require('./generateMutators')
 
 module.exports = (models, graphql) => {
@@ -8,7 +8,7 @@ module.exports = (models, graphql) => {
   graphql = generateTypes.internals(graphql)
   // console.log(graphql)
   for (let model in models) {
-    unbound[model] = generateTypes.unbound(models[model], graphql)
+    unbound[model] = generateTypes.attributes(models[model], graphql)
   }
   console.log(models.profile.attributes)
   // console.log(models.profile._adapter.datastores.default.primaryKeyCols)

@@ -26,14 +26,110 @@ const getType = function (attribute, attrName, graphql) {
     })
     return type
   }
-  if ( attribute.required ) {
-    
+  if (attribute.required || attribute.defaultsTo) {
+    if (attribute.type === 'number') {
+      if (attribute.autoMigrations && attribute.autoMigrations.columnType === '_numbertimestamp') {
+        return new graphql.GraphQLNonNull(graphql.internalDate)
+      }
+      if (attribute.validations && attribute.validations.isInteger) {
+        return new graphql.GraphQLNonNull(graphql.GraphQLInt)
+      }
+      return new graphql.GraphQLNonNull(graphql.GraphQLFloat)
+    }
+    if (attribute.type === 'string') {
+      if (attribute.validations) {
+        if (attribute.validations.isEmail) {
+          return new graphql.GraphQLNonNull(graphql.internalEmail)
+        }
+        if (attribute.validations.isHexColor) {
+          return new graphql.GraphQLNonNull(graphql.internalColor)
+        }
+        if (attribute.validations.isIP) {
+          return new graphql.GraphQLNonNull(graphql.internalIP)
+        }
+        if (attribute.validations.isURL) {
+          return new graphql.GraphQLNonNull(graphql.internalURL)
+        }
+        if (attribute.validations.isUUID) {
+          return new graphql.GraphQLNonNull(graphql.internalUUID)
+        }
+      }
+      return new graphql.GraphQLNonNull(graphql.GraphQLString)
+    }
+    if (attribute.type === 'boolean') {
+      return new graphql.GraphQLNonNull(graphql.GraphQLBoolean)
+    }
+    if (attribute.type === 'json') {
+      return new graphql.GraphQLNonNull(graphql.internalJSON)
+    }
+    if (attribute.type === 'ref') {
+      return new graphql.GraphQLNonNull(graphql.internalRef)
+    }
   }
-
 }
 
 module.exports = {
   internals (graphql) {
+    graphql.internalRef = new graphql.GraphQLScalarType({
+      name: 'Ref',
+      serialize (value) {
+        let binString = ''
+        try {
+          binString = Buffer.from(value).toString('base64').toString('utf8')
+        } catch (e) {
+          console.error(e)
+        }
+        return binString
+      },
+      parseValue (value) {
+        let base64String = ''
+        try {
+          base64String = Buffer.from(value).toString('base64')
+        } catch (e) {
+          console.error(e)
+        }
+        return base64String
+      },
+      parseLiteral(ast) {
+        let binString = null
+        if (ast.kind === Kind.STRING) {
+          try {
+            binString = Buffer.from(value).toString('base64').toString('utf8')
+          } catch (e) {
+            console.error(e)
+          }
+        }
+        return binString
+      }
+    })
+
+    graphql.internalJSON = new graphql.GraphQLScalarType({
+      name: 'Json',
+      serialize (value) {
+        let jsonString = ''
+        try {
+          jsonString = JSON.stringify(value)
+        } catch (e) {
+          console.error(e)
+        }
+        return jsonString
+      },
+      parseValue (value) {
+        return value
+      },
+      parseLiteral(ast) {
+        let jsonString = null
+        if (ast.kind === Kind.OBJECT) {
+          try {
+            jsonString = JSON.stringify(value)
+          } catch (e) {
+            console.error(e)
+          }
+        }
+        return jsonString
+      }
+    })
+
     graphql.internalDate = new graphql.GraphQLScalarType({
       name: 'Date',
       serialize (value) {
@@ -132,7 +228,7 @@ module.exports = {
     
     return graphql
   },
-  unbound (model, graphql) {
+  attributes (model, graphql) {
     for (let attrName in model.attributes) {
       let type = graphql.GraphQLString
       let attribute = model.attributes[attrName] 
