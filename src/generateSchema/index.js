@@ -4,14 +4,26 @@ const generateQueries = require('./generateQueries')
 const generateMutators = require('./generateMutators')
 
 module.exports = (models, graphql) => {
-  let unbound = {}
   graphql = generateTypes.internals(graphql)
-  // console.log(graphql)
   for (let model in models) {
-    unbound[model] = generateTypes.attributes(models[model], graphql)
+    models[model].unbound = generateTypes.attributes(models[model], graphql)
+    models[model].qlObject = new graphql.GraphQLObjectType(models[model].unbound)
   }
-  console.log(models.profile.attributes)
-  // console.log(models.profile._adapter.datastores.default.primaryKeyCols)
-  // console.log(models.user.associations)
-  // console.log(sails)
+  for (let model in models) {
+    models[model].qlObject = generateTypes.associations(models[model], models, graphql)
+  }
+
+  // Temporary Schema to validate types are working! only!
+  let queries = {}
+  for (let model in models) {
+    queries[model] = {type: models[model].qlObject}
+  }
+  const Schema = new graphql.GraphQLSchema({
+    query: new graphql.GraphQLObjectType({
+      name: 'Query',
+      fields: queries
+    })
+  })
+  console.log(graphql.printSchema(Schema))
+  return Schema
 }

@@ -13,11 +13,12 @@ module.exports = {
     },
     // One to One
     profile: {
-      model: 'Profile'
+      model: 'Profile',
+      required: true
     },
     // Reflexive many to many
     friends: {
-      collection: 'user'
+      collection: 'user',
     },
     // through
     organizations :{

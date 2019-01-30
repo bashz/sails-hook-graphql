@@ -13,7 +13,8 @@ module.exports = {
     },
     // One to many
     organization: {
-      model: 'Organization'
+      model: 'Organization',
+      required: true
     },
     // One way
     type: {

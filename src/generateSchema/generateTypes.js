@@ -66,6 +66,44 @@ const getType = function (attribute, attrName, graphql) {
       return new graphql.GraphQLNonNull(graphql.internalRef)
     }
   }
+  if (attribute.type === 'number') {
+    if (attribute.autoMigrations && attribute.autoMigrations.columnType === '_numbertimestamp') {
+      return graphql.internalDate
+    }
+    if (attribute.validations && attribute.validations.isInteger) {
+      return graphql.GraphQLInt
+    }
+    return graphql.GraphQLFloat
+  }
+  if (attribute.type === 'string') {
+    if (attribute.validations) {
+      if (attribute.validations.isEmail) {
+        return graphql.internalEmail
+      }
+      if (attribute.validations.isHexColor) {
+        return graphql.internalColor
+      }
+      if (attribute.validations.isIP) {
+        return graphql.internalIP
+      }
+      if (attribute.validations.isURL) {
+        return graphql.internalURL
+      }
+      if (attribute.validations.isUUID) {
+        return graphql.internalUUID
+      }
+    }
+    return graphql.GraphQLString
+  }
+  if (attribute.type === 'boolean') {
+    return graphql.GraphQLBoolean
+  }
+  if (attribute.type === 'json') {
+    return graphql.internalJSON
+  }
+  if (attribute.type === 'ref') {
+    return graphql.internalRef
+  }
 }
 
 module.exports = {
@@ -229,13 +267,62 @@ module.exports = {
     return graphql
   },
   attributes (model, graphql) {
+    let fields = {}
     for (let attrName in model.attributes) {
-      let type = graphql.GraphQLString
-      let attribute = model.attributes[attrName] 
-      type = getType(attribute, attrName, graphql)
+      let attribute = model.attributes[attrName]
+      if (!attribute.collection && !attribute.model) {
+        fields[attrName] = {
+          type: getType(attribute, attrName, graphql),
+          resolve(root) {
+            root[attrName]
+          }
+        }
+      }
+    }
+    return {
+      name: format.type(format.capInitial(model.identity)),
+      fields
     }
   },
-  associations (model, inputs, graphql) {
-    
+  associations (model, models, graphql) {
+    for (let i = 0; i < model.associations.length; i++) {
+      let association = model.associations[i]
+      if (association.type === 'model') {
+        if (model.attributes[association.alias].required) {
+          model.unbound.fields[association.alias] = {
+            type: new graphql.GraphQLNonNull(models[association.model].qlObject),
+            resolve(root) {
+              root[association.alias]
+            }
+          }
+        } else {
+          model.unbound.fields[association.alias] = {
+            type: models[association.model].qlObject,
+            resolve(root) {
+              root[association.alias]
+            }
+          }
+        }
+      }
+      if (association.type === 'collection') {
+        // Need to flag ot check `through` association
+        if (association.via && !model.attributes[association.alias].through && models[association.collection].attributes[association.via].required) {
+          model.unbound.fields[association.alias] = {
+            type: new graphql.GraphQLNonNull(new graphql.GraphQLList(new graphql.GraphQLNonNull(models[association.collection].qlObject))),
+            resolve(root) {
+              root[association.alias]
+            }
+          }
+        } else {
+          model.unbound.fields[association.alias] = {
+            type: new graphql.GraphQLNonNull(new graphql.GraphQLList(models[association.collection].qlObject)),
+            resolve(root) {
+              root[association.alias]
+            }
+          }
+        }
+      }
+    }
+    return model.qlObject
   }
 }
