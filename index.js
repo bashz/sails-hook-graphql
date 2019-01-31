@@ -34,9 +34,21 @@ module.exports = function (sails) {
     },
     initialize (cb) {
       sails.after(['hook:orm:loaded'], () => {
+        // get rid of non relevant models like many to many mandatory
+        // those models have a sails schema, but we must keep through
+        // models as they carry informations
+        // could be done on 1 loop, on demand check I guess?
+        let throughs = []
+        for (model in sails.models) {
+          for (attrName in sails.models[model].attributes) {
+            if (sails.models[model].attributes[attrName].through) {
+              throughs.push(sails.models[model].attributes[attrName].through)
+            }
+          }
+        }
         let toOmit = []
         for (model in sails.models) {
-          if (sails.models[model].hasSchema) {
+          if (sails.models[model].hasSchema && throughs.indexOf(model) === -1) {
             toOmit.push(model)
           }
         }

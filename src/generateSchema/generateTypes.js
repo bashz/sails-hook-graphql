@@ -273,7 +273,7 @@ module.exports = {
       if (!attribute.collection && !attribute.model) {
         fields[attrName] = {
           type: getType(attribute, attrName, graphql),
-          resolve(root) {
+          resolve (root) {
             root[attrName]
           }
         }
@@ -284,39 +284,62 @@ module.exports = {
       fields
     }
   },
-  associations (model, models, graphql) {
+  through (model, models, graphql) {
+    // must not loop and retuen 1 result, better names are needed
+    let throughs = {}
+    for (let i = 0; i < model.associations.length; i++) {
+      let association = model.associations[i]
+      if (association.type === 'collection') {
+        if (association.via && model.attributes[association.alias].through) {
+          throughs[model.attributes[association.alias].through + association.alias] = new graphql.GraphQLObjectType({
+            name: format.type(format.capInitial(model.attributes[association.alias].through) + format.capInitial(association.alias)),
+            fields: _.merge(_.merge({}, models[association.collection].unbound.fields), models[model.attributes[association.alias].through].unbound.fields)
+          })
+        }
+      }
+    }
+    return throughs
+  },
+  associations (model, models, throughs, graphql) {
     for (let i = 0; i < model.associations.length; i++) {
       let association = model.associations[i]
       if (association.type === 'model') {
         if (model.attributes[association.alias].required) {
           model.unbound.fields[association.alias] = {
             type: new graphql.GraphQLNonNull(models[association.model].qlObject),
-            resolve(root) {
+            resolve (root) {
               root[association.alias]
             }
           }
         } else {
           model.unbound.fields[association.alias] = {
             type: models[association.model].qlObject,
-            resolve(root) {
+            resolve (root) {
               root[association.alias]
             }
           }
         }
       }
       if (association.type === 'collection') {
-        // Need to flag ot check `through` association
         if (association.via && !model.attributes[association.alias].through && models[association.collection].attributes[association.via].required) {
           model.unbound.fields[association.alias] = {
             type: new graphql.GraphQLNonNull(new graphql.GraphQLList(new graphql.GraphQLNonNull(models[association.collection].qlObject))),
-            resolve(root) {
+            resolve (root) {
+              root[association.alias]
+            }
+          }
+        }
+        if (association.via && model.attributes[association.alias].through) {
+          model.unbound.fields[association.alias] = {
+            type: new graphql.GraphQLList(throughs[model.attributes[association.alias].through + association.alias]),
+            resolve (root) {
               root[association.alias]
             }
           }
         } else {
           model.unbound.fields[association.alias] = {
             type: new graphql.GraphQLNonNull(new graphql.GraphQLList(models[association.collection].qlObject)),
-            resolve(root) {
+            resolve (root) {
               root[association.alias]
             }
           }

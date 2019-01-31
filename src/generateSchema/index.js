@@ -9,8 +9,13 @@ module.exports = (models, graphql) => {
     models[model].unbound = generateTypes.attributes(models[model], graphql)
     models[model].qlObject = new graphql.GraphQLObjectType(models[model].unbound)
   }
+  let throughs = {}
   for (let model in models) {
-    models[model].qlObject = generateTypes.associations(models[model], models, graphql)
+    Object.assign(throughs, generateTypes.through(models[model], models, graphql))
+  }
+  console.log(throughs)
+  for (let model in models) {
+    models[model].qlObject = generateTypes.associations(models[model], models, throughs, graphql)
   }
 
   // Temporary Schema to validate types are working! only!
@@ -18,6 +23,7 @@ module.exports = (models, graphql) => {
   for (let model in models) {
     queries[model] = {type: models[model].qlObject}
   }
+
   const Schema = new graphql.GraphQLSchema({
     query: new graphql.GraphQLObjectType({
       name: 'Query',
