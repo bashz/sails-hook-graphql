@@ -11,8 +11,8 @@ module.exports = {
   type (name) {
     return name += 'Type';
   },
-  inputs (name) {
-    return name += 'InputType';
+  input (name) {
+    return name += 'Input';
   },
   query (name) {
     return name += 'Query';

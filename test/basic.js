@@ -15,9 +15,11 @@ describe('Basic tests', function () {
         "views": false,
         "i18n": false
       },
-      models: { migrate: 'drop'},
+      models: { migrate: 'alter'},
       log: { level: 'debug' }
-    }, function (err, _sails) {
+    }, async function (err, _sails) {
+      // const u = await Profile.create({displayName: 'boss', age: 30}).fetch()
+      // console.log(u)
       if (err) {
         return done(err)
       }
@@ -35,9 +37,11 @@ describe('Basic tests', function () {
 
   it('Hits the configured route', function (done) {
     supertest(sails.hooks.http.app)
-      .get('/graphql')
+      .post('/graphql')
+      .send({query: '{profile  {id displayName age}}'})
+      // .send({query: '{profiles {id displayName age}}'})
       .expect((res) => {
-        res.body = 'Hey'
+        console.log(res.body)
       })
       .expect(200, done)
   })

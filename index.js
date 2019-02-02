@@ -1,9 +1,34 @@
 const graphql = require('graphql')
 const generateSchema = require('./src/generateSchema')
 
-const register = function (sails) {
-  sails.registerAction((req, res) => {
-    return res.status(200).send('Hey')
+const register = function (sails, schema, graphql) {
+  sails.registerAction(async (req, res) => {
+    console.log(req.body)
+    let result = null
+    try {
+      result = await graphql.graphql(
+        schema,
+        req.body.query,
+        null,
+        {
+          request: sails.request,
+          reqData: {
+            headers: {}
+          }
+        }
+      )
+    } catch (e) {
+      res.status(500)
+      return res.json(e)
+    }
+    if (!result) {
+      res.status(400)
+    }
+    return res.json(result)
+    // .then((result) => {
+    //   return res.json(result)
+    // })
+    //res.ok();
   }, 'graphql')
 }
 
@@ -53,14 +78,14 @@ module.exports = function (sails) {
           }
         }
         const schema = generateSchema(_.omit(sails.models, toOmit), graphql)
-        register(sails, schema)
+        register(sails, schema, graphql)
         this.routes.before[sails.config[this.configKey].route] = {action: 'graphql'}
         return cb()
       })
     },
     registerActions(cb) {
       const schema = generateSchema(_.omit(sails.models, ['archive']), graphql)
-        register(sails, schema)
+        register(sails, schema, graphql)
       return cb()
     }
   }
