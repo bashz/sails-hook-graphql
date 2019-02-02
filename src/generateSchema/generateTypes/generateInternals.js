@@ -6,33 +6,26 @@ module.exports = internals = function (graphql) {
   graphql.internalRef = new graphql.GraphQLScalarType({
     name: 'Ref',
     serialize (value) {
-      let binString = ''
-      try {
-        binString = Buffer.from(value).toString('base64').toString('utf8')
-      } catch (e) {
-        console.error(e)
-      }
-      return binString
-    },
-    parseValue (value) {
       let base64String = ''
       try {
-        base64String = Buffer.from(value).toString('base64')
+        base64String = Buffer.from(value).toString('base64').toString('utf8')
       } catch (e) {
         console.error(e)
       }
       return base64String
     },
-    parseLiteral(ast) {
-      let binString = null
-      if (ast.kind === Kind.STRING) {
-        try {
-          binString = Buffer.from(value).toString('base64').toString('utf8')
-        } catch (e) {
-          console.error(e)
-        }
+    parseValue (value) {
+      let bin = null
+      try {
+        bin = Buffer.from(value, 'base64')
+      } catch (e) {
+        console.error(e)
       }
-      return binString
+      return bin
+    },
+    parseLiteral(ast) {
+      // TODO
+      return ast.value
     }
   })
 
@@ -48,34 +41,34 @@ module.exports = internals = function (graphql) {
       return jsonString
     },
     parseValue (value) {
-      return value
+      let jsonObject = null
+      try {
+        jsonObject = JSON.parse(value)
+      } catch (e) {
+        console.error(e)
+      }
+      return jsonObject
     },
     parseLiteral(ast) {
-      let jsonString = null
-      if (ast.kind === Kind.OBJECT) {
-        try {
-          jsonString = JSON.stringify(value)
-        } catch (e) {
-          console.error(e)
-        }
-      }
-      return jsonString
+      // TODO
+      return ast.value
     }
   })
 
   graphql.internalDate = new graphql.GraphQLScalarType({
     name: 'Date',
     serialize (value) {
-      return new Date(value)
+      return {utc: new Date(value).toUTCString(), timestamp: value}
     },
     parseValue (value) {
-      return new Date(value).toDateString()
+      if (!(value instanceof Date)) {
+        value = new Date(value).valueOf()
+      }
+      return value.valueOf()
     },
     parseLiteral(ast) {
-      if (ast.kind === Kind.INT) {
-        return new Date(ast.value)
-      }
-      return null
+      // TODO
+      return ast.value
     }
   })
 
