@@ -36,7 +36,7 @@ module.exports = (models, graphql) => {
   // for (let model in models) {
   //   queries[model] = {type: models[model].qlObject}
   // }
-
+  console.log(models.user.attributes)
   const Schema = new graphql.GraphQLSchema({
     query: new graphql.GraphQLObjectType({
       name: 'Query',

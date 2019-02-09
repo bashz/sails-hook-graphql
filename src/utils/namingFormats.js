@@ -3,18 +3,21 @@ module.exports = {
     return name.toUpperCase()
   },
   capInitial (name) {
-    return name.replace(/^(\w)/, (match, cought) => cought.toUpperCase())
+    return name.replace(/^(\w)/, (match, caught) => caught.toUpperCase())
   },
   plurialize (name) {
-    return name.replace(/(y)?$/, (match, cought) => {if(cought) return 'ies'; else return 's'})
+    return name.replace(/(y)?$/, (match, caught) => {if(caught) return 'ies'; return 's'})
   },
   type (name) {
-    return name += 'Type';
+    return name += 'Type'
   },
   input (name) {
-    return name += 'Input';
+    return name += 'Input'
   },
   query (name) {
-    return name += 'Query';
+    return name += 'Query'
+  },
+  or (name) {
+    return 'or' + this.capInitial(name)
   }
 }

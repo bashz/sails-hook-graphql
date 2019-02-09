@@ -1,6 +1,6 @@
 const createEnum = require('./createEnum')
 
-module.exports = getType = function (attribute, attrName, graphql, forceNull = false) {
+module.exports = getType = function (attribute, attrName, graphql) {
   if (
     attribute.autoMigrations &&
     (
@@ -19,7 +19,7 @@ module.exports = getType = function (attribute, attrName, graphql, forceNull = f
     }
     return graphql.enums[attrName]
   }
-  if (attribute.required || attribute.defaultsTo && !forceNull) {
+  if (attribute.required || attribute.defaultsTo) {
     if (attribute.type === 'number') {
       if (attribute.autoMigrations && attribute.autoMigrations.columnType === '_numbertimestamp') {
         return new graphql.GraphQLNonNull(graphql.internalDate)

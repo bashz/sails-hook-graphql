@@ -18,8 +18,9 @@ describe('Basic tests', function () {
       models: { migrate: 'alter'},
       log: { level: 'debug' }
     }, async function (err, _sails) {
-      // const u = await Profile.create({displayName: 'boss', age: 30}).fetch()
-      // console.log(u)
+      // const u = await Organization.create({name: 'org'}).fetch()
+      // const v = await Project.create({name: 'pro', organization: 1}).fetch()
+      // console.log(u, v)
       if (err) {
         return done(err)
       }
@@ -38,8 +39,7 @@ describe('Basic tests', function () {
   it('Hits the configured route', function (done) {
     supertest(sails.hooks.http.app)
       .post('/graphql')
-      .send({query: '{profile  {id displayName age}}'})
-      // .send({query: '{profiles {id displayName age}}'})
+      .send({query: '{profiles (last: 1) {id displayName age}}'})
       .expect((res) => {
         console.log(res.body)
       })

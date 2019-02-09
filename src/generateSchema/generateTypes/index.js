@@ -1,5 +1,6 @@
 const format = require('../../utils/namingFormats')
 const getType = require('./getType')
+const getSearchType = require('./getSearchType')
 
 module.exports = {
   attributes (model, graphql) {
@@ -85,18 +86,33 @@ module.exports = {
     return model.qlObject
   },
   queryInputs (model, models, throughs, graphql) {
+    // for type date and number we can have an input range
+    // for strings we can have regexp
     let fields = {}
     for (let attrName in model.attributes) {
       let attribute = model.attributes[attrName]
-      if (!attribute.collection && !attribute.model) {
+        if (!attribute.collection) {
         fields[attrName] = {
-          type: getType(attribute, attrName, graphql, true)
+          type: getSearchType(attribute, graphql)
         }
       }
     }
-    return {
-      name: format.type(format.input(format.capInitial(model.identity))),
-      fields
+
+    // for (let i = 0; i < model.associations.length; i++) {
+    //   let association = model.associations[i]
+    //   if (association.type === 'model') {
+    //     fields[attrName]
+    //   }
+    //   if (association.type === 'collection') {
+    //   }
+    // }
+
+    fields.or = {
+      type: new graphql.GraphQLList(new graphql.GraphQLInputObjectType({
+        name: format.type(format.or(model.identity)),
+        fields
+      }))
     }
+    return fields
   }
 }
