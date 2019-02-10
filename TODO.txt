@@ -1,0 +1,12 @@
+v 0.0.2 : each model query critirea are to be a proper type
+v 0.0.3 : add updateOne and deleteOne mutations
+v 0.0.4 : mutations are to be done on 2 steps in order to be able to populate foreigns
+v 0.0.5 : populate must take ast context in consideration (optimization)
+v 0.0.6 : cleaning, fixing and minor refactoring
+v 0.1.0 : support all standard adapters & > 95% coverage
+... things that apears when we code
+v 0.2.0 : Aggregation on queries
+... other things may apear here
+v 0.3.0 : Multi Mutations (findOrCreate, findOrDestroy, and tree insertion on sub-queries)
+... meanwhile drinking many coffees
+v 1.0.0 : support all adapters
