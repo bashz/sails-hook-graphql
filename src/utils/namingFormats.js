@@ -19,5 +19,14 @@ module.exports = {
   },
   or (name) {
     return 'or' + this.capInitial(name)
+  },
+  create (name) {
+    return 'create' + this.capInitial(name)
+  },
+  update (name) {
+    return 'update' + this.capInitial(name)
+  },
+  remove (name) {
+    return 'delete' + this.capInitial(name)
   }
 }

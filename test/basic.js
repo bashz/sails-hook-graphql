@@ -39,10 +39,19 @@ describe('Basic tests', function () {
   it('Hits the configured route', function (done) {
     supertest(sails.hooks.http.app)
       .post('/graphql')
-      .send({query: '{profiles (last: 1) {id displayName age}}'})
+      // .send({query: 'mutation {createOrganization (input: {name: "sworm"}) {id name}}'})
+      .send({query: 'mutation {updateOrganization (id: 4, input: {name: "sworme"}) {id name createdAt updatedAt profile{displayName}}}'})
+      // .send({query: 'mutation {deleteOrganization (id: 3) {id}}'})
       .expect((res) => {
         console.log(res.body)
       })
       .expect(200, done)
+    // supertest(sails.hooks.http.app)
+    //   .post('/graphql')
+    //   .send({query: '{profiles (last: 1) {id displayName age}}'})
+    //   .expect((res) => {
+    //     console.log(res.body)
+    //   })
+    //   .expect(200, done)
   })
 })
