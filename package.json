@@ -3,6 +3,12 @@
   "version": "0.0.1-unstable",
   "description": "Graphql controller for sails",
   "main": "index.js",
+  "files": [
+    "src/*",
+    "test/basic.js",
+    "*.json",
+    "*.js"
+  ],
   "sails": {
     "isHook": true,
     "hookName": "graphql"
