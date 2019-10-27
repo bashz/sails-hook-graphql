@@ -1,7 +1,8 @@
 {
-  "name": "sails-hook-graphql",
+  "name": "sails-hook-easy-graphql",
   "version": "0.0.1-unstable",
   "description": "Graphql controller for sails",
+  "repository": "https://github.com/bashz/sails-hook-graphql",
   "main": "index.js",
   "files": [
     "src/*",
@@ -22,7 +23,7 @@
     "sails": "^1.1.0"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha -R spec"
+    "test": "./node_modules/.bin/mocha --timeout 30000 --slow 500 -R spec"
   },
   "author": "Bashz <nemlaghi.bechir@gmail.com>",
   "license": "GPL",
