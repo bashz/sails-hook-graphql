@@ -167,7 +167,7 @@ module.exports = internals = function (graphql) {
     serialize (value) {
       let base64String = ''
       try {
-        base64String = Buffer.from(value).toString('base64').toString('utf8')
+        base64String = Buffer.from(value).toString('base64')
       } catch (e) {
         console.error(e)
       }

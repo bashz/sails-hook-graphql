@@ -62,11 +62,11 @@ module.exports = (models, graphql) => {
 
   const Schema = new graphql.GraphQLSchema({
     query: new graphql.GraphQLObjectType({
-      name: 'Query',
+      name: 'RootQueryType',
       fields: queries
     }),
     mutation: new graphql.GraphQLObjectType({
-      name: 'Mutation',
+      name: 'RootMutationType',
       fields: mutations
     }) 
   })

@@ -1,4 +1,9 @@
 module.exports = {
+  enumName (name) {
+    return name.replace(/^\d/, c => `_${c}`)
+    .replace(/\W/g, '_')
+    .replace(/_+/g, '_')  
+  },
   capAll (name) {
     return name.toUpperCase()
   },
