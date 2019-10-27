@@ -1,10 +1,11 @@
+const champs = require('./champs')
+const items = require('./items')
 const fs = require('fs')
-const Sails = require('sails').Sails
-const supertest = require('supertest')
-const champs = require('./data/champs')
-const items = require('./data/items')
 
-const fillData = async (log) => {
+
+module.exports = fillData = async (log) => {
+  log.debug('Mock')
+  log.debug('├── Start Adding data')
   log.debug('│   ├── Adding flat Items')
   for (let i = 0; i < items.length; i++) {
     let item = items[i]
@@ -93,7 +94,7 @@ const fillData = async (log) => {
     let champ = champs[i]
     try {
       let champion = await Champion.findOne({ name: champ.name })
-      for (let j = 0; j < champ.recommended.length; j++) {
+      for (let j = 0; j < Math.min(champ.recommended.length, 5); j++) {
         let recommended = champ.recommended[j]
         let item = await Item.findOne({ key: recommended.key })
         if (champion && item) {
@@ -110,56 +111,6 @@ const fillData = async (log) => {
       return e
     }
   }
+  log.debug('└── Done adding data')
   return null
 }
-
-describe('Basic tests', () => {
-  var sails
-  before(done => {
-    // this.timeout(30000)
-    Sails().lift({
-      appPath: __dirname + '/instance',
-      hooks: {
-        "sails-hook-graphql": require('../'),
-        "grunt": false,
-        "pubsub": false,
-        "session": false,
-        "views": false,
-        "i18n": false
-      },
-      models: { migrate: 'drop' },
-      log: { level: 'debug' }
-    }, async (err, _sails) => {
-      if (err) {
-        return done(err)
-      }
-      _sails.log.debug('Mock')
-      _sails.log.debug('├── Start Adding data')
-      err = await fillData(_sails.log)
-      if (err) {
-        _sails.log.error(new Error('Error while creating mocked data'))
-        return done(err)
-      }
-      _sails.log.debug('└── Done adding data')
-      sails = _sails
-      return done()
-    })
-  })
-
-  after(done => {
-    if (sails) {
-      return sails.lower(done)
-    }
-    return done()
-  })
-
-  it('Hits the configured route', done => {
-    supertest(sails.hooks.http.app)
-      .post('/graphql')
-      .send({ query: '{champion (name: Nunu) { title items {name} } }' })
-      .expect((res) => {
-        console.log(res.body)
-      })
-      .expect(200, done)
-  })
-})

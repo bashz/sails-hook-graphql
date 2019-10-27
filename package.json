@@ -23,11 +23,12 @@
     "sails": "^1.1.0"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha --timeout 30000 --slow 500 -R spec"
+    "test": "./node_modules/.bin/mocha --timeout 30000 --slow 500 -R spec test/start.js --recursive test/integration test/close.js"
   },
   "author": "Bashz <nemlaghi.bechir@gmail.com>",
   "license": "GPL",
   "dependencies": {
+    "chai": "^4.2.0",
     "graphql": "^14.1.1",
     "validator": "^10.11.0"
   }

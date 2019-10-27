@@ -34,7 +34,7 @@ const register = function (sails, schema, graphql) {
 
 module.exports = function (sails) {
   return {
-    defaults(config) {
+    defaults() {
       return {
         graphql: {
           models: '*',
@@ -47,15 +47,7 @@ module.exports = function (sails) {
       }
     },
     configure () {
-      if (!sails.config[this.configKey]) {
-        return sails.config[this.configKey] = {route: '/graphql', models: '*'}
-      }
-      if(!sails.config[this.configKey].route) {
-        sails.config[this.configKey].route = '/graphql'
-      }
-      if(!sails.config[this.configKey].models) {
-        sails.config[this.configKey].models = '*'
-      }
+      sails.config[this.configKey] = Object.assign(sails.config[this.configKey] || {}, sails.config.graphql)
     },
     initialize (cb) {
       sails.after(['hook:orm:loaded'], () => {

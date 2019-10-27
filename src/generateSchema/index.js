@@ -70,6 +70,6 @@ module.exports = (models, graphql) => {
       fields: mutations
     }) 
   })
-  console.log(graphql.printSchema(Schema))
+  // console.log(graphql.printSchema(Schema))
   return Schema
 }
