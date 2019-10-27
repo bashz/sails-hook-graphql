@@ -1,5 +1,5 @@
 /**
- * Tag.js
+ * Skin.js
  *
  * @description :: A model definition represents a database table/collection.
  * @docs        :: https://sailsjs.com/docs/concepts/models-and-orm/models
@@ -9,17 +9,19 @@ module.exports = {
   attributes: {
     name: {
       type: 'string',
-      required: true,
-      unique: true
+      defaultsTo: 'default'
     },
-    // assocaition
-    champions: {
-      collection: 'champion',
-      via: 'tags'
+    chromas: {
+      type: 'boolean',
+      defaultsTo: false
     },
-    items: {
-      collection: 'item',
-      via: 'tags'
+    image: {
+      type: 'string',
+      isURL: true
+    },
+    // association
+    champion: {
+      model: 'champion'
     }
   }
 }
