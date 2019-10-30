@@ -21,7 +21,7 @@ describe('Pre testing', () => {
       },
       models: { migrate: 'drop' },
       log: { level: 'debug' },
-      graphql: { route: '/test-graphql' }
+      graphql: { route: '/test-graphql', schemaRoute: '/test-graphql-schema', enableSchemaRoute: true}
     }, async (err, _sails) => {
       if (err) {
         return done(err)
@@ -40,7 +40,19 @@ describe('Pre testing', () => {
     supertest(sails.hooks.http.app)
       .post('/test-graphql')
       .send({})
-      .expect(res => expect(res.body).to.have.property('errors'))
+      .expect(res => {
+        // console.log(res);
+        expect(res.body).to.have.property('errors')
+      })
+      .expect(200, done)
+  })
+  it('Hits the schema route', done => {
+    supertest(sails.hooks.http.app)
+      .post('/test-graphql-schema')
+      .send({})
+      .expect(res => {
+        expect(res).to.have.property('text')
+      })
       .expect(200, done)
   })
 })

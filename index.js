@@ -32,6 +32,14 @@ const register = function (sails, schema, graphql) {
   }, 'graphql')
 }
 
+const registerSchemaAction = function(schema) {
+  sails.registerAction(async (req, res) => {
+    res.status(200)
+    res.type('text/plain')
+    return res.send(schema)
+  }, 'graphql-schema')
+}
+
 module.exports = function (sails) {
   return {
     defaults() {
@@ -70,8 +78,14 @@ module.exports = function (sails) {
           }
         }
         const schema = generateSchema(_.omit(sails.models, toOmit), graphql)
-        register(sails, schema, graphql)
+
+        register(sails, schema.schemaObject, graphql)
         this.routes.before[sails.config[this.configKey].route] = {action: 'graphql'}
+
+        if (sails.config[this.configKey].enableSchemaRoute) {
+          registerSchemaAction(schema.schemaText)
+          this.routes.before[sails.config[this.configKey].schemaRoute] = {action: 'graphql-schema'}
+        }
         return cb()
       })
     },
