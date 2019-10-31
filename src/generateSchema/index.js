@@ -61,7 +61,7 @@ module.exports = (models, graphql, configKey) => {
   // We need to expose a hook here -before creating- for devs to override or add to the schema !
   const { queries, mutations } = sails.config[configKey].schemaHook(generatedQueries, generatedMutations)
 
-  const schemaObject = new graphql.GraphQLSchema({
+  const schema = new graphql.GraphQLSchema({
     query: new graphql.GraphQLObjectType({
       name: 'RootQueryType',
       fields: queries
@@ -71,9 +71,5 @@ module.exports = (models, graphql, configKey) => {
       fields: mutations
     }) 
   })
-  const schemaText = graphql.printSchema(schemaObject)
-  return {
-    schemaObject,
-    schemaText
-  }
+  return schema
 }

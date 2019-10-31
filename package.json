@@ -16,11 +16,11 @@
   },
   "devDependencies": {
     "mocha": "^5.2.0",
-    "sails": "^1.1.0",
+    "sails": "^1.2.2",
     "supertest": "^3.4.1"
   },
   "peerDependencies": {
-    "sails": "^1.1.0"
+    "sails": "^1.2.2"
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha --timeout 30000 --slow 500 -R spec test/start.js --recursive test/integration test/close.js"

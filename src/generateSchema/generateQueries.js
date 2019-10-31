@@ -6,7 +6,6 @@ module.exports = (model, graphql) => {
       if (!Object.keys(args).length) {
         return new Error(`must provide at least one parameter in '${Object.keys(model.qlQueryIntputs)}'`)
       }
-      console.log(args)
       // check context also before populating
       try {
         let query = model.findOne(args)
