@@ -4,7 +4,7 @@ const generateTypes = require('./generateTypes')
 const generateQueries = require('./generateQueries')
 const generateMutators = require('./generateMutators')
 
-module.exports = (models, graphql) => {
+module.exports = (models, graphql, configKey) => {
   graphql = generateInternals(graphql)
 
   // outputs
@@ -43,22 +43,23 @@ module.exports = (models, graphql) => {
   //   models[model].qlInputObject = generateTypes.inputAssociations(models[model], models, inputThroughs, graphql)
   // }
 
-  let queries = {}
+  let generatedQueries = {}
   for (var model in models) {
     let query = generateQueries(models[model], graphql)
-    queries[model] = query.single
-    queries[format.plurialize(model)] = query.plurial
+    generatedQueries[model] = query.single
+    generatedQueries[format.plurialize(model)] = query.plurial
   }
 
-  let mutations = {}
+  let generatedMutations = {}
   for (var model in models) {
     let mutation = generateMutators(models[model], graphql)
-    mutations[format.create(model)] = mutation.create
-    mutations[format.update(model)] = mutation.update
-    mutations[format.remove(model)] = mutation.remove
+    generatedMutations[format.create(model)] = mutation.create
+    generatedMutations[format.update(model)] = mutation.update
+    generatedMutations[format.remove(model)] = mutation.remove
   }
 
   // We need to expose a hook here -before creating- for devs to override or add to the schema !
+  const { queries, mutations } = sails.config[configKey].schemaHook(generatedQueries, generatedMutations)
 
   const schemaObject = new graphql.GraphQLSchema({
     query: new graphql.GraphQLObjectType({
