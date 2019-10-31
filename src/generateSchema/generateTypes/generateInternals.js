@@ -157,7 +157,7 @@ module.exports = internals = function (graphql) {
     last: {type: graphql.GraphQLInt},
     page: {type: graphql.GraphQLInt, defaultValue: 1},
     items: {type: graphql.GraphQLInt, defaultValue: 30},
-    // Sorting is can be multiple :/ not yet supported
+    // Sorting can be multiple :/ not yet supported
     sortBy: {type: graphql.GraphQLString, defaultValue: 'createdAt'},
     sortType: {type: graphql.enums.sortType, defaultValue: 'ASC'}
   }

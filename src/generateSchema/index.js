@@ -60,7 +60,7 @@ module.exports = (models, graphql) => {
 
   // We need to expose a hook here -before creating- for devs to override or add to the schema !
 
-  const schemaObject = new graphql.GraphQLSchema({
+  const schema = new graphql.GraphQLSchema({
     query: new graphql.GraphQLObjectType({
       name: 'RootQueryType',
       fields: queries
@@ -70,9 +70,5 @@ module.exports = (models, graphql) => {
       fields: mutations
     }) 
   })
-  const schemaText = graphql.printSchema(schemaObject)
-  return {
-    schemaObject,
-    schemaText
-  }
+  return schema
 }

@@ -7,7 +7,6 @@ module.exports = (model, graphql) => {
     type: model.qlObject,
     args: { input: { type: model.qlInputObject } },
     async resolve(root, args, context, info) {
-      console.log(args)
       // check context also before populating
       try {
         let query = model.create(args.input).fetch()
@@ -32,7 +31,6 @@ module.exports = (model, graphql) => {
       if (!Object.keys(args).length) {
         return new Error(`must provide at least one parameter in '${Object.keys(model.qlQueryIntputs)}'`)
       }
-      console.log(args)
       // check context also before populating
       try {
         let query = model.update(_.omit(args, ['input'])).set(args.input).fetch()
@@ -53,7 +51,6 @@ module.exports = (model, graphql) => {
       if (!Object.keys(args).length) {
         return new Error(`must provide at least one parameter in '${Object.keys(model.qlQueryIntputs)}'`)
       }
-      console.log(args)
       // check context also before populating
       try {
         let query = model.destroy(args).fetch()
