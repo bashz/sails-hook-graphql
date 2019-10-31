@@ -47,15 +47,21 @@ module.exports = function (sails) {
         graphql: {
           models: '*',
           route: '/graphql',
+          schemaHook: function (queries, mutations) {
+            return {queries, mutations}
+          },
           schemaRoute: '/schema',
           enableSchemaRoute: true
         },
         __configKey__: {
           models: '*',
           route: '/graphql',
+          schemaHook: function (queries, mutations) {
+            return {queries, mutations}
+          },
           schemaRoute: '/schema',
           enableSchemaRoute: true
-        }
+        },
       }
     },
     configure() {
@@ -81,7 +87,7 @@ module.exports = function (sails) {
             toOmit.push(model)
           }
         }
-        const schema = generateSchema(_.omit(sails.models, toOmit), graphql)
+        const schema = generateSchema(_.omit(sails.models, toOmit), graphql, this.configKey)
 
         register(schema)
         this.routes.before[sails.config[this.configKey].route] = { action: 'graphql' }
