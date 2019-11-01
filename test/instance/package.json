@@ -11,8 +11,5 @@
   },
   "main": "app.js",
   "author": "bashz",
-  "license": "",
-  "engines": {
-    "node": "^11.1"
-  }
+  "license": "MIT"
 }
